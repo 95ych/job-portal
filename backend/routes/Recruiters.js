@@ -21,23 +21,40 @@ router.get("/", function(req, res) {
 // POST request 
 // Add a user to db
 router.post("/register", (req, res) => {
-    const newRecruiter = new Recruiter({
-        name: req.body.name,
-        password: req.body.password,
-        contactNumber: req.body.contactNumber,
-        bio: req.body.bio,
-        email: req.body.email,
-        date: req.body.date
+    
+    const newUser = new User({
+        name: req.body.user.name,
+        email: req.body.user.email,
+        password: req.body.user.password,
+        role: "recruiter"
     });
 
-    newRecruiter.save()
+    newUser.save()
         .then(user => {
-            res.status(200).json(user);
+            const newRecruiter = new Applicant({
+              user: user,
+              contactNumber: req.body.contactNumber,
+              bio: req.body.bio
+          });
+
+          newRecruiter.save()
+              .then(recruiter => {
+                  res.status(200).json(recruiter);
+              })
+              .catch(err => {
+                  console.log(err)
+                  res.status(400).send(err);
+              });
+        
         })
         .catch(err => {
+            console.log(err)
             res.status(400).send(err);
         });
+
+    
 });
+
 
 // POST request 
 // Login

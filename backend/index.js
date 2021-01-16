@@ -17,10 +17,12 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 let JobRouter = require("./routes/Jobs");
 let ApplicantRouter = require("./routes/Applicants");
 let RecruiterRouter = require("./routes/Recruiters");
+let UserRouter = require("./routes/Users");
 
 app.use("/api/jobs",JobRouter);
 app.use("/api/applicants",ApplicantRouter);
 app.use("/api/recruiters",RecruiterRouter);
+app.use("/api/users",UserRouter);
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')

@@ -3,59 +3,80 @@ var router = express.Router();
 
 // Load Applicant model
 const Applicant = require("../models/Applicants");
-
+const User = require("../models/Users");
 // GET request 
 // Getting all the users
 router.get("/", function(req, res) {
-    Applicant.find(function(err, users) {
+    Applicant.find(function(err, applicants) {
 		if (err) {
 			console.log(err);
 		} else {
-			res.json(users);
+			res.json(applicants);
 		}
 	})
 });
 
-// NOTE: Below functions are just sample to show you API endpoints working, for the assignment you may need to edit them
 
-// POST request 
-// Add a user to db
 router.post("/register", (req, res) => {
-    const newApplicant = new Applicant({
-        name: req.body.name,
-        password: req.body.password,
-        email: req.body.email,
-        education: req.body.education,
-        date: req.body.date
+    
+    const newUser = new User({
+        name: req.body.user.name,
+        email: req.body.user.email,
+        password: req.body.user.password,
+        role: "applicant"
     });
 
-    newApplicant.save()
+    newUser.save()
         .then(user => {
-            res.status(200).json(user);
+            const newApplicant = new Applicant({
+              user: user,
+              education: req.body.education,
+          });
+
+          newApplicant.save()
+              .then(applicant => {
+                  res.status(200).json(applicant);
+              })
+              .catch(err => {
+                  console.log(err)
+                  res.status(400).send(err);
+              });
+        
         })
         .catch(err => {
+            console.log(err)
             res.status(400).send(err);
         });
+
+    
 });
 
 // POST request 
 // Login
 router.post("/login", (req, res) => {
-	const email = req.body.email;
-	// Find user by email
-	Applicant.findOne({ email }).then(user => {
-		// Check if user email exists
-		if (!user) {
-			return res.status(404).json({
-				error: "Email not found",
-			});
+  const user = req.body.user;
+  // Find user by email
+  User.findOne({ "email":req.body.email }).then(user => {
+      
+      
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({
+        error: "Email not found",
+      });
         }
         else{
+          Applicant.findOne({"user": user._id}).
+          then(applicant => {
+            console.log(applicant)
             res.send("Email Found");
-            return user;
+            return applicant;
+          })
+            
         }
-	});
+  });
 });
+
 
 router.get('/:id', (request, response) => {
   Applicant.findById(request.params.id)

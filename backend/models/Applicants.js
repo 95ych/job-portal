@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const uniqueValidator = require('mongoose-unique-validator')
 //Profile Sec on Details with edi ng op on [5 marks] -
 // ○ Name, Email ID
 // ○ Educa on - Each educa on instance contains the following
@@ -31,25 +31,14 @@ const institutionSchema = new mongoose.Schema({
 })
 
 const applicantSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users'
   },
   education: [institutionSchema],
-  date: {
-    type: Date,
-    default: Date.now
-  }
-  
 });
+
+
 
 
 module.exports = Applicant = mongoose.model('Applicants', applicantSchema)

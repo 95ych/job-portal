@@ -1,32 +1,21 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 // ● Profile sec on details with editing option [5 marks] -
 // ○ Name, Email ID, Contact Number, Bio (max 250 words)
 
 const recruiterSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users'
   },
   contactNumber:{
     type: Number,
     required: true
   },
-  Bio :{
+  bio :{
     type: String,
     required: false
-  },
-  date: {
-    type: Date,
-    default: Date.now
   }
   
 });
