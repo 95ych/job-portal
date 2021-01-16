@@ -27,6 +27,6 @@ const userSchema = new mongoose.Schema({
 
 });
 
-userSchema.plugin(uniqueValidator, { message: `Error, expected {PATH} to be unique.` });
+userSchema.plugin(uniqueValidator, { message: `Error: That {PATH} already exists.` });
 
 module.exports = User = mongoose.model('Users', userSchema);
