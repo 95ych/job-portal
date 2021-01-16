@@ -8,7 +8,7 @@ const User = require("../models/Users");
 // GET request 
 // Getting all the users
 router.get("/", function(req, res) {
-    Applicant.find(function(err, users) {
+    User.find(function(err, users) {
 		if (err) {
 			console.log(err);
 		} else {
@@ -43,7 +43,7 @@ router.post("/login", (req, res) => {
 
 
 router.get('/:id', (request, response) => {
-  Applicant.findById(request.params.id)
+  User.findById(request.params.id)
     .then(user => {
       if(user) response.json(job)
       else response.status(404).end
