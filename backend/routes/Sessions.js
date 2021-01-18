@@ -7,7 +7,6 @@ const Recruiter = require("../models/Recruiters");
 // GET request 
 // Getting all the users
 router.get("/", function(req, res) {
-    console.log(req.session)
     Recruiter.find(function(err, users) {
 		if (err) {
 			console.log(err);
@@ -23,15 +22,6 @@ router.get("/", function(req, res) {
 // Add a user to db
 router.post("/register", (req, res) => {
     
-  const check_recruiter = req.body
-
-  if(err = signUpValidator.validate(check_recruiter, {abortEarly: false}).error){
-    console.log(err.details)
-    res.status(400).send(err);
-  }
-
-  else{
-
     const newUser = new User({
         name: req.body.user.name,
         email: req.body.user.email,
@@ -39,35 +29,28 @@ router.post("/register", (req, res) => {
         role: "recruiter"
     });
 
-   
     newUser.save()
-      .then(user => {
-          const newRecruiter = new Recruiter({
-            user: user,
-            contactNumber: req.body.contactNumber,
-            bio: req.body.bio
+        .then(user => {
+            const newRecruiter = new Applicant({
+              user: user,
+              contactNumber: req.body.contactNumber,
+              bio: req.body.bio
           });
-          
-          if(err = validator.recruitValidator.validate(newRecruiter, {abortEarly: false}).error){
-            console.log(err.details)
+
+          newRecruiter.save()
+              .then(recruiter => {
+                  res.status(200).json(recruiter);
+              })
+              .catch(err => {
+                  console.log(err)
+                  res.status(400).send(err);
+              });
+        
+        })
+        .catch(err => {
+            console.log(err)
             res.status(400).send(err);
-          }
-          else{
-            newRecruiter.save()
-            .then(recruiter => {
-                res.status(200).json(recruiter);
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(400).send(err);
-            });
-        }
-      })
-      .catch(err => {
-          console.log(err)
-          res.status(400).send(err);
-      });
-  }
+        });
 
     
 });
@@ -76,37 +59,21 @@ router.post("/register", (req, res) => {
 // POST request 
 // Login
 router.post("/login", (req, res) => {
-  
-
-  const {email, password} = req.body
-  User.findOne({ email }).then(user => {
-      
-    console.log(user)
-    if (!user) {
-      return res.status(404).json({
-        error: "Email not found",
-      });
-    }
-    else if (user && user.comparePasswords(password)) {
-      Recruiter.findOne({"user": user._id})
-      .then(recruiter => {
-      req.session.user = user
-      req.session.recruiter = recruiter     
-      console.log(req.session)
-      })
-
-      return res.send(user);
-    } 
-    else {
-          throw new Error('Invalid login credentials');
-    }
-
-  }).catch(error => {
-      console.log(error)
-       return res.status(400).send( { error : 'malformatted id' } )
-    })
+	const email = req.body.email;
+	// Find user by email
+	Recruiter.findOne({ email }).then(user => {
+		// Check if user email exists
+		if (!user) {
+			return res.status(404).json({
+				error: "Email not found",
+			});
+        }
+        else{
+            res.send("Email Found");
+            return user;
+        }
+	});
 });
-
 
 router.get('/:id', (request, response) => {
   Recruiter.findById(request.params.id)

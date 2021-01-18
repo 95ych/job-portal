@@ -1,11 +1,21 @@
 require('dotenv').config()
 const Job = require('./models/Jobs')
 const express = require('express')
-const app = express()
+const session = require('express-session')
 const morgan = require('morgan')
 const cors = require('cors')
 const url = process.env.MONGODB_URI
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+const connectStore = require("connect-mongo")
+
+const JobRouter = require("./routes/Jobs")
+const ApplicantRouter = require("./routes/Applicants")
+const RecruiterRouter = require("./routes/Recruiters")
+const UserRouter = require("./routes/Users")
+
+
+const app = express()
+const mongoStore = connectStore(session)
 
 app.use(cors())
 app.use(express.json())
@@ -14,10 +24,22 @@ app.use(express.static('build'))
 morgan.token('post-data', (request) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
-let JobRouter = require("./routes/Jobs");
-let ApplicantRouter = require("./routes/Applicants");
-let RecruiterRouter = require("./routes/Recruiters");
-let UserRouter = require("./routes/Users");
+app.use(session({
+  name: process.env.SESS_NAME, 
+  secret: process.env.SESS_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: new mongoStore({
+        mongooseConnection: mongoose.connection,
+        collection: 'session',
+        ttl: parseInt(process.env.SESS_LIFETIME) / 1000,
+  }), 
+  cookie:{
+    sameSite: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: parseInt(process.env.SESS_LIFETIME)
+  }
+}))
 
 app.use("/api/jobs",JobRouter);
 app.use("/api/applicants",ApplicantRouter);

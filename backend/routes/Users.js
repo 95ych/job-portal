@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-
+const joi = require("joi")
 // Load Applicant model
 const Applicant = require("../models/Applicants");
 const Recruiter = require("../models/Recruiters");
@@ -8,6 +8,7 @@ const User = require("../models/Users");
 // GET request 
 // Getting all the users
 router.get("/", function(req, res) {
+    console.log(req.session)
     User.find(function(err, users) {
 		if (err) {
 			console.log(err);

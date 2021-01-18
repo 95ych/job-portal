@@ -18,7 +18,7 @@ const jobSchema = new mongoose.Schema({
   duration:String, //in months
   salary:String, //per month
   rating:Number //0-5
-})
+},{ timestamps: true });
 
 
 
