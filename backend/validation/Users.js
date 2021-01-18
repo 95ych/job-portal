@@ -10,11 +10,14 @@ const name = Joi.string()
 .max(30)
 .required()
 
+const role = Joi.string().valid('applicant', 'recruiter')
+
 const startYear = Joi.string()
 .regex(/\d{4}$/)
 .required()
 
 const endYear = Joi.string()
+.trim()
 .regex(/\d{4}$/)
 
 const message =
@@ -46,7 +49,8 @@ const applicantSchema = Joi.object(
   user:{
     name,
     email,
-    password
+    password,
+    role
   },
   education
   
