@@ -7,15 +7,8 @@ const Recruiter = require("../models/Recruiters");
 const User = require("../models/Users");
 // GET request 
 // Getting all the users
-router.get("/", function(req, res) {
-    console.log(req.session)
-    User.find(function(err, users) {
-		if (err) {
-			console.log(err);
-		} else {
-			res.json(users);
-		}
-	})
+router.get("/", (req, res) => {
+    res.send(req.session);
 });
 
 router.post("/login", (req, res) => {
@@ -34,6 +27,9 @@ router.post("/login", (req, res) => {
           Applicant.findOne({"user": user._id}).
           then(applicant => {
             console.log(applicant)
+            req.session.user = user
+            req.session.applicant = applicant
+            req.session.save()
             res.send("Email Found");
             return applicant;
           })

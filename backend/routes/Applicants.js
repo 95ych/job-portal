@@ -46,6 +46,8 @@ router.post("/register", (req, res) => {
             newApplicant.save()
                 .then(applicant => {
                     req.session.user = newUser
+                    req.session.applicant = newApplicant
+                    req.session.save()
                     res.status(200).json(applicant);
                 }).catch(err => {
                     console.log(err)
