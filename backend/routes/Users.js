@@ -1,5 +1,6 @@
-var express = require("express");
-var router = express.Router();
+require('dotenv').config()
+const express = require("express");
+const router = express.Router();
 const joi = require("joi")
 // Load Applicant model
 const Applicant = require("../models/Applicants");
@@ -30,7 +31,7 @@ router.post("/login", (req, res) => {
             req.session.user = user
             req.session.applicant = applicant
             req.session.save()
-            res.send("Email Found");
+            res.send(req.session);
             return applicant;
           })
             
@@ -38,6 +39,22 @@ router.post("/login", (req, res) => {
   });
 });
 
+router.delete("", ({ session }, res) => {
+  try {
+    const user = session.user;
+    if (user) {
+      session.destroy(err => {
+        if (err) throw (err);
+        res.clearCookie(SESS_NAME);
+        res.send(user);
+      });
+    } else {
+      throw new Error('Something went wrong');
+    }
+  } catch (err) {
+    res.status(422).send(err);
+  }
+});
 
 router.get('/:id', (request, response) => {
   User.findById(request.params.id)
