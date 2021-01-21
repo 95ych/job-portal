@@ -19,7 +19,17 @@ const jobSchema = new mongoose.Schema({
   typeOfJob:String, 
   duration:Number, 
   salary:String, 
-  rating:Number 
+  rating:Number,
+  applications:[
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+      },
+      sop:String,
+      rating:Number
+    }
+  ]
 });
 
 

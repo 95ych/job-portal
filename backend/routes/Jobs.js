@@ -14,6 +14,12 @@ router.get('/', (request, response) => {
   })
 })
 
+router.get('/recruiter/:mail', (request, response) => {
+  Job.find({recruiter:{ mail : request.params.mail}}).then(jobs => {
+    response.json(jobs.map(job => job.toJSON()))
+  })
+})
+
 router.get('/:id', (request, response) => {
   Job.findById(request.params.id)
     .then(job => {
