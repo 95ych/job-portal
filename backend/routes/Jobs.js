@@ -50,8 +50,21 @@ router.post('/', (request, response, next) => {
   //console.log(jobs.find((title) => title == body.title))
   const job = new Job({
     title: body.title,
+    recruiter:{
+      name: body.recruiter.name,
+      email: body.recruiter.email
+    },
+    maxNoOf:{
+      applications:body.maxNoOf.applications,
+      positions: body.maxNoOf.positions
+    },
+    dateOfPosting: new Date(),
+    deadline: new Date(),
+    requiredSkillSets: body.requiredSkillSets,
+    typeOfJob: body.typeOfJob,
+    duration: body.duration,
     salary: body.salary,
-    dateOfPosting: new Date()
+    rating: body.rating
   })
 
   job.save()

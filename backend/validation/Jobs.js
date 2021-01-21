@@ -1,7 +1,6 @@
 const Joi = require("joi")
 
-const email = Joi.string()
-  .email()
+const title = Joi.string()
   .required();
 
 const name = Joi.string()
@@ -41,7 +40,7 @@ const education = Joi.array().items(Joi.object().keys({
   endYear
 }))
 
-const bio = Joi.string().optional().allow("")
+const bio = Joi.string()
 
 const contactNumber = Joi.string()
   .regex(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/)
@@ -69,7 +68,7 @@ const recruiterSchema = Joi.object(
   contactNumber,
   bio
   
-});
+}).allowUnknown();
 
 const signInValidator = Joi.object().keys({
   email,

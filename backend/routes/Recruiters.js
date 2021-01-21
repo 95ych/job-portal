@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-
+const { recruiterSchema } = require("../validation/Users")
 // Load Recruiter model
 const Recruiter = require("../models/Recruiters");
 
@@ -25,51 +25,44 @@ router.post("/register", (req, res) => {
     
   const check_recruiter = req.body
 
-  if(err = signUpValidator.validate(check_recruiter, {abortEarly: false}).error){
+  if(err = recruiterSchema.validate(check_recruiter, {abortEarly: false}).error){
     console.log(err.details)
     res.status(400).send(err);
   }
 
   else{
-
     const newUser = new User({
         name: req.body.user.name,
         email: req.body.user.email,
         password: req.body.user.password,
         role: "recruiter"
-    });
-
-   
+    });    
     newUser.save()
-      .then(user => {
-          const newRecruiter = new Recruiter({
-            user: user,
-            contactNumber: req.body.contactNumber,
-            bio: req.body.bio
+        .then(user => {
+            const newRecruiter = new Recruiter({
+              user: user,
+              contactNumber: req.body.contactNumber,
+              bio: req.body.bio
           });
-          
-          if(err = validator.recruitValidator.validate(newRecruiter, {abortEarly: false}).error){
-            console.log(err.details)
-            res.status(400).send(err);
-          }
-          else{
-            newRecruiter.save()
-            .then(recruiter => {
-                res.status(200).json(recruiter);
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(400).send(err);
-            });
-        }
-      })
-      .catch(err => {
-          console.log(err)
-          res.status(400).send(err);
-      });
-  }
 
-    
+          newRecruiter.save()
+              .then(recruiter => {
+                  req.session.user = newUser
+                  req.session.recruiter = newRecruiter
+                  req.session.save()
+                  res.status(200).json(recruiter);
+              }).catch(err => {
+                  console.log(err)
+                  res.status(400).send(err);
+              });
+              
+        
+        })
+        .catch(err => {
+                  console.log(err)
+                  res.status(400).send(err);
+              });
+    }
 });
 
 

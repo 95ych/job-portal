@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const jobSchema = new mongoose.Schema({
   title: String,
-  date: Date,
   recruiter:{
     name:String,
     email:String
@@ -11,14 +10,17 @@ const jobSchema = new mongoose.Schema({
     applications:Number,
     positions:Number
   },
-  dateOfPosting: Date,
-  deadline: Date,//dd/mm/yyyy hr min
-  requiredSkillSets:String, //languages
-  typeOfJob:String, //Full time, part time,WFH
-  duration:String, //in months
-  salary:String, //per month
-  rating:Number //0-5
-},{ timestamps: true });
+  dateOfPosting: {
+    type:Date,
+    default:Date.now()
+  },
+  deadline: Date,
+  requiredSkillSets:[{type:String}], 
+  typeOfJob:String, 
+  duration:Number, 
+  salary:String, 
+  rating:Number 
+});
 
 
 
