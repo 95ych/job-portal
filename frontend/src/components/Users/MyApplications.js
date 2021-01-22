@@ -13,9 +13,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import AddNew from './Select.js'
-import Edit from './Select.js'
-import Select from './Select.js'
+import Dialog from './Apply.js'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import Container from '@material-ui/core/Container';
@@ -50,24 +48,19 @@ const useStyles = makeStyles((theme) => ({
 
 }));
     
-const ActiveJobs = (props) => {
+const MyApplications = (props) => {
     const classes = useStyles();
-    const [jobs, setUsers] = useState([])
-    const [sortedUsers, setSortedUsers] = useState([])
+    const [jobs, setJobs] = useState([])
+    const [sortedJobs, setSortedJobs] = useState([])
     const [sortName, setSortName] = useState(true)
     const [filterByTitle, setFilterByTitle] = useState('')
 
     const loadHook= () => {
-      
-            console.log(props.user.user.email,'effect')
-            
-            dbService
-              .getAllOfRecruiter(props.user.user.email)
-              .then(responseData => {
-                console.log('promise fulfilled')
-                console.log(responseData);
-                setUsers(responseData)
-                setSortedUsers(responseData)
+        axios.get('/api/jobs')
+             .then(response => {
+                //  console.log(response);
+                setJobs(response.data)
+                setSortedJobs(response.data)
              })
              .catch(function(error) {
                  console.log(error);
@@ -90,7 +83,7 @@ const ActiveJobs = (props) => {
                 return 1;
             }
           });
-        setUsers(array)
+        setJobs(array)
         setSortName(!sortName)
     }
 
@@ -107,10 +100,10 @@ const ActiveJobs = (props) => {
         }
     }
 
-    const applyButton = () =>{
+    const applyButton = (button, job, user) =>{
         if(sortName){
             return(
-                <Edit button="Edit"/>
+                <Dialog button={button} job={job} user={user}/>
             )
         }
         else{
@@ -132,7 +125,7 @@ const ActiveJobs = (props) => {
             <div className={classes.heroContent}>
             <Container maxWidth="sm">
                 <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-                    Posted jobs
+                   My Applications
                 </Typography>
             </Container>
             </div>
@@ -169,22 +162,26 @@ const ActiveJobs = (props) => {
                             <TableHead>
                                 <TableRow>
                                         <TableCell>Title</TableCell>
-                                        <TableCell> <Button onClick={sortChange}>{renderIcon()}</Button>Date of Posting</TableCell>
-                                        <TableCell>No. of Applications</TableCell>
-                                        <TableCell>No. of Positions left</TableCell>
-                                        <TableCell>Action</TableCell>
+                                        <TableCell> <Button onClick={sortChange}>{renderIcon()}</Button>Deadline</TableCell>
+                                        <TableCell>Recruiter</TableCell>
+                                        <TableCell>Salary</TableCell>
+                                        <TableCell>Rating</TableCell>
+                                        <TableCell>Duration</TableCell>
+                                        <TableCell>Status</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                             {
-                                jobs.filter( (job) => (job.maxNoOf.positions - job.applications.filter(e => e.status==='accepted').length) > 0).filter( (job) => job.title.toLowerCase().includes(filterByTitle.toLowerCase())
+                                jobs.filter( (job) => job.title.toLowerCase().includes(filterByTitle.toLowerCase())
                                 ).map((job) => (
                                     <TableRow key={job._id}>
                                         <TableCell>{job.title}</TableCell>
-                                        <TableCell>{new Date(job.dateOfPosting).toLocaleDateString()}</TableCell>
-                                        <TableCell>{job.applications.length}</TableCell>
-                                        <TableCell>{job.maxNoOf.positions - job.applications.filter(e => e.status==='accepted').length}</TableCell>
-                                        <TableCell>{applyButton()} delete </TableCell>
+                                        <TableCell>{new Date(job.deadline).toLocaleString()}</TableCell>
+                                        <TableCell>{job.recruiter.name}</TableCell>
+                                        <TableCell>{job.salary}</TableCell>
+                                        <TableCell>{job.rating}</TableCell>
+                                        <TableCell>{job.duration} months</TableCell>
+                                        <TableCell>{applyButton("Apply",job,props.user.user)}</TableCell>
                                     </TableRow>
                             ))
                             }
@@ -198,4 +195,4 @@ const ActiveJobs = (props) => {
 }
 
 
-export default ActiveJobs;
+export default MyApplications;

@@ -19,13 +19,14 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import dbService from '../../services/dbService'
 
-const Filter = ({filterByTitle, handleFilterChange, users}) => {
+const Filter = ({filterByTitle, handleFilterChange, jobs}) => {
     return(
         <div>
         <Autocomplete
             id="combo-box-demo"
-            options={users}
+            options={jobs}
             getOptionLabel={(option) => option.title}
             style={{ width: 300 }}
             onInputChange={handleFilterChange} 
@@ -47,19 +48,19 @@ const useStyles = makeStyles((theme) => ({
 
 }));
     
-const UsersList = () => {
+const JobsList = (props) => {
     const classes = useStyles();
-    const [users, setUsers] = useState([])
-    const [sortedUsers, setSortedUsers] = useState([])
+    const [jobs, setJobs] = useState([])
+    const [sortedJobs, setSortedJobs] = useState([])
     const [sortName, setSortName] = useState(true)
     const [filterByTitle, setFilterByTitle] = useState('')
 
     const loadHook= () => {
-        axios.get('http://localhost:3001/api/jobs')
+        axios.get('/api/jobs')
              .then(response => {
                 //  console.log(response);
-                setUsers(response.data)
-                setSortedUsers(response.data)
+                setJobs(response.data)
+                setSortedJobs(response.data)
              })
              .catch(function(error) {
                  console.log(error);
@@ -72,7 +73,7 @@ const UsersList = () => {
 /**
  *      Note that this is sorting only at front-end.
  */
-        let array = users;
+        let array = jobs;
         let flag = sortName;
         array.sort(function(a, b) {
             if(a.date != undefined && b.date != undefined){
@@ -82,7 +83,7 @@ const UsersList = () => {
                 return 1;
             }
           });
-        setUsers(array)
+        setJobs(array)
         setSortName(!sortName)
     }
 
@@ -99,10 +100,10 @@ const UsersList = () => {
         }
     }
 
-    const applyButton = () =>{
+    const applyButton = (button, job, user) =>{
         if(sortName){
             return(
-                <Dialog/>
+                <Dialog button={button} job={job} user={user}/>
             )
         }
         else{
@@ -151,7 +152,7 @@ const UsersList = () => {
                         </ListItem>
                         <Divider />
                         <ListItem button divider>
-                        <Filter filterByTitle={filterByTitle} handleFilterChange={handleFilterChange} users ={users} />
+                        <Filter filterByTitle={filterByTitle} handleFilterChange={handleFilterChange} jobs ={jobs} />
                         </ListItem>
                     </List>
                 </Grid>
@@ -170,16 +171,16 @@ const UsersList = () => {
                             </TableHead>
                             <TableBody>
                             {
-                                users.filter( (user) => user.title.toLowerCase().includes(filterByTitle.toLowerCase())
-                                ).map((user) => (
-                                    <TableRow key={user._id}>
-                                        <TableCell>{user.title}</TableCell>
-                                        <TableCell>{new Date(user.deadline).toLocaleString()}</TableCell>
-                                        <TableCell>{user.recruiter.name}</TableCell>
-                                        <TableCell>{user.salary}</TableCell>
-                                        <TableCell>{user.rating}</TableCell>
-                                        <TableCell>{user.duration} months</TableCell>
-                                        <TableCell>{applyButton()}</TableCell>
+                                jobs.filter( (job) => job.title.toLowerCase().includes(filterByTitle.toLowerCase())
+                                ).map((job) => (
+                                    <TableRow key={job._id}>
+                                        <TableCell>{job.title}</TableCell>
+                                        <TableCell>{new Date(job.deadline).toLocaleString()}</TableCell>
+                                        <TableCell>{job.recruiter.name}</TableCell>
+                                        <TableCell>{job.salary}</TableCell>
+                                        <TableCell>{job.rating}</TableCell>
+                                        <TableCell>{job.duration} months</TableCell>
+                                        <TableCell>{applyButton("Apply",job,props.user.user)}</TableCell>
                                     </TableRow>
                             ))
                             }
@@ -193,4 +194,4 @@ const UsersList = () => {
 }
 
 
-export default UsersList;
+export default JobsList;

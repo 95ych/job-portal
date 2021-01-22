@@ -27,7 +27,11 @@ const jobSchema = new mongoose.Schema({
         ref: 'Users'
       },
       sop:String,
-      rating:Number
+      rating:Number,
+      status:{ 
+        type:String,
+        default:"Applied"
+      }
     }
   ]
 });

@@ -15,7 +15,7 @@ router.get('/', (request, response) => {
 })
 
 router.get('/recruiter/:mail', (request, response) => {
-  Job.find({recruiter:{ mail : request.params.mail}}).then(jobs => {
+  Job.find({'recruiter.email':request.params.mail}).then(jobs => {
     response.json(jobs.map(job => job.toJSON()))
   })
 })
@@ -98,10 +98,20 @@ router.put('/:id', (request, response, next) => {
       console.log('failed')
       next(error)
     })
-
-
 })
 
+router.put('/application/:id', (request, response, next) => {
+  const job = request.body
+  Job.findByIdAndUpdate(request.params.id, job, { new: true })
+    .then(updatedJob => {
+      //console.log(updatedJob)
+      response.json(updatedJob)
+    })
+    .catch(error => {
+      console.log('failed')
+      next(error)
+    })
+})
 
 router.delete('/:id', (request, response, next) => {
   Job.findByIdAndRemove(request.params.id)

@@ -181,29 +181,29 @@ const App = (props) => {
   return (
     <div>
       <h1 className="display-2 text-center" >Add new posting</h1>
-      
-      <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="text" placeholder="Job title" name="title" ref={register({required: "This field is required", maxLength: 80})} />
+      <br/><br/><br/>
+      <form className="form-group text-center" onSubmit={handleSubmit(onSubmit)}>
+      <input className="form-control" type="text" placeholder="Job title" name="title" ref={register({required: "This field is required", maxLength: 80})} />
       <p>{errors.title?.message}</p>
-      <input type="number" placeholder="Max no. of applications" name="maxNoOf.applications" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <input type="number" placeholder="Max. no. of positions" name="maxNoOf.positions" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <input type="datetime-local" placeholder="Deadline" name="deadline" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <input type="text" placeholder="Required skills" name="requiredSkillSets" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <select name="typeOfJob" ref={register({ required: "This field is required" })}>
+      <input className="form-control" type="number" placeholder="Max no. of applications" name="maxNoOf.applications" ref={register({required: "This field is required"})} />
+      <p>{errors.maxNoOf?.message}</p>
+      <input className="form-control" type="number" placeholder="Max. no. of positions" name="maxNoOf.positions" ref={register({required: "This field is required"})} />
+      <p>{errors.maxNoOf?.message}</p>
+      <input className="form-control" type="datetime-local" placeholder="Deadline" name="deadline" ref={register({required: "This field is required"})} />
+      <p>{errors.deadline?.message}</p>
+      <input className="form-control" type="text" placeholder="Required skills" name="requiredSkillSets" ref={register({required: "This field is required"})} />
+      <p>{errors.requiredSkillSets?.message}</p>
+      <select className="form-control" name="typeOfJob" ref={register({ required: "This field is required" })}>
         <option value="full-time">Full time</option>
         <option value="part-time">Part time</option>
         <option value="WFH">Work From Home</option>
       </select>
-      <p>{errors.title?.message}</p>
-      <input type="number" placeholder="Duration" name="duration" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <input type="number" placeholder="Salary" name="salary" ref={register({required: "This field is required"})} />
-      <p>{errors.title?.message}</p>
-      <input type="submit" />
+      <p>{errors.typeOfJob?.message}</p>
+      <input className="form-control" type="number" placeholder="Duration" name="duration" ref={register({required: "This field is required"})} />
+      <p>{errors.duration?.message}</p>
+      <input className="form-control" type="number" placeholder="Salary" name="salary" ref={register({required: "This field is required"})} />
+      <p>{errors.salary?.message}</p>
+      <input className="form-control" type="submit" />
     </form>
     </div>
   )

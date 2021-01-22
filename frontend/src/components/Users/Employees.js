@@ -13,9 +13,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import AddNew from './Select.js'
-import Edit from './Select.js'
-import Select from './Select.js'
+import Dialog from './Select.js'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import Container from '@material-ui/core/Container';
@@ -23,12 +21,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import dbService from '../../services/dbService'
 
-const Filter = ({filterByTitle, handleFilterChange, jobs}) => {
+const Filter = ({filterByTitle, handleFilterChange, users}) => {
     return(
         <div>
         <Autocomplete
             id="combo-box-demo"
-            options={jobs}
+            options={users}
             getOptionLabel={(option) => option.title}
             style={{ width: 300 }}
             onInputChange={handleFilterChange} 
@@ -50,9 +48,9 @@ const useStyles = makeStyles((theme) => ({
 
 }));
     
-const ActiveJobs = (props) => {
+const UsersList = (props) => {
     const classes = useStyles();
-    const [jobs, setUsers] = useState([])
+    const [users, setUsers] = useState([])
     const [sortedUsers, setSortedUsers] = useState([])
     const [sortName, setSortName] = useState(true)
     const [filterByTitle, setFilterByTitle] = useState('')
@@ -80,7 +78,7 @@ const ActiveJobs = (props) => {
 /**
  *      Note that this is sorting only at front-end.
  */
-        let array = jobs;
+        let array = users;
         let flag = sortName;
         array.sort(function(a, b) {
             if(a.date != undefined && b.date != undefined){
@@ -110,7 +108,7 @@ const ActiveJobs = (props) => {
     const applyButton = () =>{
         if(sortName){
             return(
-                <Edit button="Edit"/>
+                <Dialog button="Edit"/>
             )
         }
         else{
@@ -159,7 +157,7 @@ const ActiveJobs = (props) => {
                         </ListItem>
                         <Divider />
                         <ListItem button divider>
-                        <Filter filterByTitle={filterByTitle} handleFilterChange={handleFilterChange} jobs ={jobs} />
+                        <Filter filterByTitle={filterByTitle} handleFilterChange={handleFilterChange} users ={users} />
                         </ListItem>
                     </List>
                 </Grid>
@@ -177,13 +175,13 @@ const ActiveJobs = (props) => {
                             </TableHead>
                             <TableBody>
                             {
-                                jobs.filter( (job) => (job.maxNoOf.positions - job.applications.filter(e => e.status==='accepted').length) > 0).filter( (job) => job.title.toLowerCase().includes(filterByTitle.toLowerCase())
-                                ).map((job) => (
-                                    <TableRow key={job._id}>
-                                        <TableCell>{job.title}</TableCell>
-                                        <TableCell>{new Date(job.dateOfPosting).toLocaleDateString()}</TableCell>
-                                        <TableCell>{job.applications.length}</TableCell>
-                                        <TableCell>{job.maxNoOf.positions - job.applications.filter(e => e.status==='accepted').length}</TableCell>
+                                users.filter( (user) => user.title.toLowerCase().includes(filterByTitle.toLowerCase())
+                                ).map((user) => (
+                                    <TableRow key={user._id}>
+                                        <TableCell>{user.title}</TableCell>
+                                        <TableCell>{new Date(user.dateOfPosting).toLocaleDateString()}</TableCell>
+                                        <TableCell>{user.applications.length}</TableCell>
+                                        <TableCell>{user.maxNoOf.positions - user.applications.filter(e => e.status==='accepted').length}</TableCell>
                                         <TableCell>{applyButton()} delete </TableCell>
                                     </TableRow>
                             ))
@@ -198,4 +196,4 @@ const ActiveJobs = (props) => {
 }
 
 
-export default ActiveJobs;
+export default UsersList;
